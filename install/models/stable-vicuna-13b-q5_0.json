@@ -28,7 +28,7 @@
         }, {
           "method": "shell.start",
           "params": {
-            "path": "https://github.com/malfunctionize/llama.git/bin/llamacpp/build/bin"
+            "path": "https://github.com/cocktailpeanut/llamacpp.pinokio.git/bin/llamacpp/build/bin"
           }
         }, {
           "method": "shell.enter",
