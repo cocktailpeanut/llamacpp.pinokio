@@ -1,0 +1,39 @@
+{
+  "run": [{
+    "method": "shell.run",
+    "params": {
+      "message": "mkdir bin",
+      "path": "../.."
+    }
+  }, {
+    "method": "shell.run",
+    "params": {
+      "message": "git clone https://github.com/ggerganov/llama.cpp llamacpp",
+      "path": "../../bin"
+    }
+  }, {
+    "method": "shell.run",
+    "params": {
+      "message": "mkdir build",
+      "path": "../../bin/llamacpp"
+    }
+  }, {
+    "method": "shell.run",
+    "params": {
+      "message": "cmake {{os.platform() === 'win32' ? '-G \"MinGW Makefiles\"' : ''}} {{os.platform() === 'darwin' && os.arch() === 'arm64' ? '-DLLAMA_METAL=ON' : ''}} ..",
+      "path": "../../bin/llamacpp/build"
+    }
+  }, {
+    "method": "shell.run",
+    "params": {
+      "message": "cmake --build . --config Release",
+      "path": "../../bin/llamacpp/build"
+    }
+  }, {
+    "method": "notify",
+    "params": {
+      "html": "Llama.cpp installation complete! Click here to get started by downloading a model!",
+      "href": "../models/orca-mini-3b-q4_0.json"
+    }
+  }]
+}
