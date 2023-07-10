@@ -55,10 +55,48 @@
       }
     }
   }, {
+    "method": "fs.write",
+    "params": {
+      "path": "../../example/simple-orca-mini-3b-q4_0.json",
+      "json2": {
+        "run": [
+          {
+            "uri": "https://github.com/cocktailpeanut/llamacpp.pinokio.git/index.js",
+            "method": "query",
+            "params": {
+              "prompt": [
+                "### Instruction",
+                "",
+                "Give me three movie characters and why you like them. Be brief.",
+                "",
+                "### Response",
+                "",
+                ""
+              ],
+              "on": [{
+                "event": "/.*### Response[\r\n]*(.+?)[\r\n]*###/gs",
+                "return": "{{event.matches[0][1]}}"
+              }, {
+                "event": "/.*### Response[\r\n]*(.+?)\\[end of text\\]/gs",
+                "return": "{{event.matches[0][1]}}"
+              }, {
+                "event": "/.*### Response[\r\n]*(.+?)[\r\n]*llama_print_timings:/gs",
+                "return": "{{event.matches[0][1]}}"
+              }],
+              "model": "orca-mini/3b_q4_0.bin",
+              "options": {
+                "-n": 256
+              }
+            }
+          }
+        ]
+      }
+    }
+  }, {
     "method": "notify",
     "params": {
       "html": "<p><i class='fa-regular fa-hand-point-right'></i> Click to try the demo!</p>",
-      "href": "../../example/orca-mini-3b-q4_0.json"
+      "href": "../../example/simple-orca-mini-3b-q4_0.json"
     }
   }]
 }

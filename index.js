@@ -2,6 +2,48 @@ const path = require('path')
 const fs = require('fs')
 const os = require('os')
 class Rpc {
+  async query (req, ondata, kernel) {
+    const filepath = path.resolve(req.cwd, "prompt.txt")
+    await fs.promises.writeFile(filepath, req.params.prompt.join("\n"), "utf8")
+    const execpath = path.resolve(__dirname, "bin", "llamacpp", "build", "bin")
+    let options = {
+      cwd: execpath,
+      group: req.parent.path
+    }
+    let id = "llama.cpp"
+    let message = {
+      "_": [
+        os.platform() === 'win32' ? 'main' : './main'
+      ],
+      "-f": path.resolve(req.cwd, 'prompt.txt'),
+      "m": path.resolve(__dirname, "models", req.params.model),
+      "n": 256,
+    }
+    if (os.platform() === 'darwin' && process.arch ==='arm64') {
+      message["-ngl"] = 1
+    }
+
+    if (req.params.options) {
+      message = Object.assign({}, message, req.params.options)
+    }
+    let finished
+    await kernel.shell.start({
+      id,
+      group: req.parent.path,
+      path: execpath,
+    }, options, ondata)
+    let response = await kernel.shell.enter({
+      id,
+      message,
+      on: req.params.on
+    }, (stream) => {
+      ondata(stream)
+    })
+    await kernel.shell.stop({
+      id
+    })
+    return response
+  }
   async run (req, ondata, kernel) {
     let params = req.params
     let i = 1;
