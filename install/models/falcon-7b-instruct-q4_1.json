@@ -2,7 +2,7 @@
   "run": [{
     "method": "fs.download",
     "params": {
-      "url": "https://huggingface.co/TheBloke/falcon-7b-instruct-GGML/resolve/main/falcon7b-instruct.ggmlv3.q4_1.bin",
+      "uri": "https://huggingface.co/TheBloke/falcon-7b-instruct-GGML/resolve/main/falcon-7b-instruct.ggccv1.q4_1.bin",
       "path": "../../models/falcon7b-instruct/7b_q4_1.bin"
     }
   }, {
