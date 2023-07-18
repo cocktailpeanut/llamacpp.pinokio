@@ -3,7 +3,7 @@
     "method": "fs.download",
     "params": {
       "url": "https://huggingface.co/TheBloke/Llama-2-7B-GGML/resolve/main/llama-2-7b.ggmlv3.q4_0.bin",
-      "path": "../../models/llama-2-7b.ggmlv3.q4_0.bin"
+      "path": "../../models/llama-2/llama-2-7b.ggmlv3.q4_0.bin"
     }
   }, {
     "method": "fs.write",
