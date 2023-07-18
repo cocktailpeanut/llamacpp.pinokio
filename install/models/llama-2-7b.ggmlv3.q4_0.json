@@ -1,0 +1,102 @@
+{
+  "run": [{
+    "method": "fs.download",
+    "params": {
+      "url": "https://huggingface.co/TheBloke/Llama-2-7B-GGML/resolve/main/llama-2-7b.ggmlv3.q4_0.bin",
+      "path": "../../models/llama-2-7b.ggmlv3.q4_0.bin"
+    }
+  }, {
+    "method": "fs.write",
+    "params": {
+      "path": "../../example/llama-2-7b.ggmlv3.q4_0.json",
+      "json2": {
+        "run": [{
+          "method": "fs.write",
+          "params": {
+            "path": "prompt.txt",
+            "text": [
+              "### Instruction",
+              "",
+              "Give me three movie characters and why you like them. Be brief.",
+              "",
+              "### Response",
+              "",
+              ""
+            ],
+            "join": "{{os.EOL}}"
+          }
+        }, {
+          "method": "shell.start",
+          "params": {
+            "path": "https://github.com/cocktailpeanut/llamacpp.pinokio.git/bin/llamacpp/build/bin"
+          }
+        }, {
+          "method": "shell.enter",
+          "params": {
+            "message": {
+              "_": ["{{{ os.platform() === 'win32' ? 'main' : './main'}}}"],
+              "-f": "{{{path.resolve(cwd, 'prompt.txt')}}}",
+              "m": "../../../../models/llama-2/llama-2-7b.ggmlv3.q4_0.bin",
+              "n": 256,
+              "{{os.platform() === 'darwin' && os.arch() === 'arm64' ? '-ngl' : null}}": 1
+            },
+            "on": [{
+              "event": "/.*### Response[\r\n]*(.+?)[\r\n]*###/gs",
+              "return": "{{{event.matches[0][1]}}}"
+            }, {
+              "event": "/.*### Response[\r\n]*(.+?)\\[end of text\\]/gs",
+              "return": "{{{event.matches[0][1]}}}"
+            }, {
+              "event": "/.*### Response[\r\n]*(.+?)[\r\n]*llama_print_timings:/gs",
+              "return": "{{{event.matches[0][1]}}}"
+            }]
+          }
+        }]
+      }
+    }
+  }, {
+    "method": "fs.write",
+    "params": {
+      "path": "../../example/llama-2-b.ggmlv3.q4_0.json",
+      "json2": {
+        "run": [
+          {
+            "uri": "https://github.com/cocktailpeanut/llamacpp.pinokio.git/index.js",
+            "method": "query",
+            "params": {
+              "prompt": [
+                "### Instruction",
+                "",
+                "Give me three movie characters and why you like them. Be brief.",
+                "",
+                "### Response",
+                "",
+                ""
+              ],
+              "on": [{
+                "event": "/.*### Response[\r\n]*(.+?)[\r\n]*###/gs",
+                "return": "{{event.matches[0][1]}}"
+              }, {
+                "event": "/.*### Response[\r\n]*(.+?)\\[end of text\\]/gs",
+                "return": "{{event.matches[0][1]}}"
+              }, {
+                "event": "/.*### Response[\r\n]*(.+?)[\r\n]*llama_print_timings:/gs",
+                "return": "{{event.matches[0][1]}}"
+              }],
+              "model": "llama-2/llama-2-7b.ggmlv3.q4_0.bin",
+              "options": {
+                "-n": 256
+              }
+            }
+          }
+        ]
+      }
+    }
+  }, {
+    "method": "notify",
+    "params": {
+      "html": "<p><i class='fa-regular fa-hand-point-right'></i> Click to try the demo!</p>",
+      "href": "../../example/llama-2-7b.ggmlv3.q4_0.json"
+    }
+  }]
+}
